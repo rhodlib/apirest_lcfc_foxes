@@ -1,0 +1,28 @@
+{
+  "name": "apirest_lcfc_foxes",
+  "version": "1.0.0",
+  "description": "APIrest to get information about Foxes from LCFC",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.8",
+    "concurrently": "^5.3.0",
+    "nodemon": "^2.0.6",
+    "typescript": "^4.0.5"
+  },
+  "scripts": {
+    "dev": "concurrently \"tsc -w\" \"nodemon dist/index.js\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rhodlib/apirest_lcfc_foxes.git"
+  },
+  "author": "Rodolfo Talibs",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rhodlib/apirest_lcfc_foxes/issues"
+  },
+  "homepage": "https://github.com/rhodlib/apirest_lcfc_foxes#readme"
+}
