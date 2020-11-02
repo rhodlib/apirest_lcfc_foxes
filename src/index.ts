@@ -1,4 +1,5 @@
 import app from './app';
+import './database';
 
 //Main function to initialize server.
 function main() {
