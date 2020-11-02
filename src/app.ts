@@ -8,6 +8,7 @@ const app: Application = express();
 app.set('port', 3000);
 
 //Middlewares
+app.use(express.json());
 app.use(morgan('dev'));
 
 //Routes
