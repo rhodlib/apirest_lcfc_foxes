@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import './database';
 import fetch from 'node-fetch';
 import { API } from './types/API';
+
 mongoose.set('debug', true);
 
 const endpoint =
@@ -33,7 +34,9 @@ Match.countDocuments({})
                         ? scrap(page + 1, [...content, ...res.content])
                         : [...content, ...res.content]
                 );
+
             console.log(`adding ${diff} elements`);
+
             scrap().then((content) => {
                 const newElements = content.slice(0, diff).map((item) => ({
                     apiId: item.id,
@@ -42,12 +45,13 @@ Match.countDocuments({})
                         item.teams.map(({ team, score }) => [team.name, score])
                     ),
                 }));
-                console.log(newElements);
-                Match.insertMany(newElements);
+                Match.insertMany(newElements, (err, docs) => {
+                    if (err) return mongoose.disconnect(err);
+                    mongoose.disconnect();
+                });
             });
         } else {
             console.log('Up to date');
         }
     })
-    .then(() => mongoose.disconnect())
     .catch(console.error);
