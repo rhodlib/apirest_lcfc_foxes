@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import e, { Request, Response } from 'express';
 import Match, { IMatch } from '../models/Match';
 
 //Get the last match.
@@ -77,7 +77,7 @@ export const createNewMatch = async (req: Request, res: Response) => {
     try {
         const match: IMatch = new Match({ date: new Date(date), result });
         await match.save();
-        res.status(201).json(match);
+        res.status(201).json({ message: 'match successfully created', match });
     } catch (error) {
         res.status(500).send(error);
     }
@@ -85,7 +85,31 @@ export const createNewMatch = async (req: Request, res: Response) => {
 
 //Get better opponent against foxes.
 export const getBetterOpponent = async (req: Request, res: Response) => {
-    let opponent: any = [];
+    let rivals: any = {};
+    let best = {
+        name: '',
+        score: 0,
+    };
+    let opponent: any[] = [];
     const BetterOpponent = await Match.find({});
-    console.log(BetterOpponent);
+    opponent = BetterOpponent.map((item) => item.result);
+    opponent.forEach((item) => {
+        for (let [key, value] of item) {
+            if (rivals.hasOwnProperty(key)) {
+                rivals[key] = rivals[key] + value;
+            } else {
+                rivals[key] = value;
+            }
+        }
+    });
+    delete rivals['Leicester City'];
+    rivals = new Map(Object.entries(rivals));
+    for (let [key, value] of rivals) {
+        if (best.score < value) {
+            best.name = key;
+            best.score = value;
+        }
+        console.log(key);
+    }
+    res.json(best);
 };
