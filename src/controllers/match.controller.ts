@@ -60,5 +60,17 @@ export const getByDateRange = async (req: Request, res: Response) => {
     }
 };
 
+//Create new match
+export const createNewMatch = async (req: Request, res: Response) => {
+    const { result, date } = req.body;
+    const match = new Match({ date: new Date(date), result });
+    await match.save();
+    res.status(201).json(match);
+};
+
 //Get better opponent against foxes.
-export const getBetterOpponent = async (req: Request, res: Response) => {};
+export const getBetterOpponent = async (req: Request, res: Response) => {
+    let opponent: any = [];
+    const BetterOpponent = await Match.find({});
+    console.log(BetterOpponent);
+};
