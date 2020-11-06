@@ -1,115 +1,90 @@
-import e, { Request, Response } from 'express';
-import Match, { IMatch } from '../models/Match';
+import { Request, Response } from 'express';
+import { getDate } from '../utils/getDate';
+import Match from '../models/Match';
+import { resultToPoints } from '../utils/resultToPoints';
 
 //Get the last match.
-export const getLastMatch = async (req: Request, res: Response) => {
-    try {
-        const lastMatch = await Match.findOne().sort({ date: -1 });
-        if (lastMatch) {
-            return res.status(200).json(lastMatch);
-        } else {
-            return res.status(404).json({ message: 'match not found' });
-        }
-    } catch (error) {
-        res.status(500).send(error);
-    }
-};
+export const getLastMatch = (req: Request, res: Response) =>
+    Match.findOne()
+        .sort({ date: -1 })
+        .then((last) => res.status(200).json(last))
+        .catch((err) => res.status(500).json({ message: err }));
 
 //Get match by ID or Date.
-export const getByIdOrDate = async (req: Request, res: Response) => {
-    const { id, date } = req.body;
-    let match;
-    try {
-        if (id) {
-            match = await Match.findById(id);
-        } else if (date) {
-            const finalDate: string = date
-                .substring(0, 8)
-                .concat(Number(date.substring(8)) + 1);
-            match = await Match.find({
-                $and: [
-                    { date: { $gte: new Date(date) } },
-                    { date: { $lte: new Date(finalDate) } },
-                ],
-            });
+export const getByIdOrDate = (req: Request, res: Response) => {
+    const { id } = req.params;
+    if (id) {
+        return Match.findById(id)
+            .then((match) => res.status(200).json(match))
+            .catch((err) => res.status(404).json(err));
+    } else {
+        const { from, to } = req.query;
+        if (from) {
+            return Match.findByDate(from as string, to as string)
+                .then((matches) => res.status(200).json(matches))
+                .catch((err) => res.status(404).json(err));
         } else {
-            return res.status(400).json({ message: 'bad request' });
+            res.status(400).json({ message: 'Bad request' });
         }
-
-        if (match) {
-            return res.status(200).json(match);
-        } else {
-            return res.status(404).json({ message: 'match not found' });
-        }
-    } catch (error) {
-        res.status(500).send(error);
-    }
-};
-
-//Get matches between date range.
-export const getByDateRange = async (req: Request, res: Response) => {
-    let { from, to } = req.body;
-    try {
-        if (from && to) {
-            to = to.substring(0, 8).concat(Number(to.substring(8)) + 1);
-            const match: IMatch[] = await Match.find({
-                $and: [
-                    { date: { $gte: new Date(from) } },
-                    { date: { $lte: new Date(to) } },
-                ],
-            });
-            if (match.length > 0) {
-                return res.status(200).json(match);
-            } else {
-                return res.status(404).json({ message: 'match not found' });
-            }
-        } else {
-            return res.status(400).json({ message: 'bad request' });
-        }
-    } catch (error) {
-        res.status(500).send(error);
     }
 };
 
 //Create new match
-export const createNewMatch = async (req: Request, res: Response) => {
+export const createNewMatch = (req: Request, res: Response) => {
     const { result, date } = req.body;
-    try {
-        const match: IMatch = new Match({ date: new Date(date), result });
-        await match.save();
-        res.status(201).json({ message: 'match successfully created', match });
-    } catch (error) {
-        res.status(500).send(error);
+    const match = new Match({ date: getDate(date), result });
+    match
+        .save()
+        .then((match) =>
+            res
+                .status(201)
+                .json({ message: 'match successfully created', match })
+        )
+        .catch((err) => res.status(400).json(err));
+};
+
+//Get points of Leicester city between dates.
+export const getPoints = (req: Request, res: Response) => {
+    const { from, to } = req.query;
+    if (from) {
+        Match.findByDate(from as string, to as string)
+            .then((matches) =>
+                matches.reduce((total, match) => {
+                    return resultToPoints(match.result) + total;
+                }, 0)
+            )
+            .then((result) => res.status(200).json(result))
+            .catch((err) => res.status(404).json(err));
     }
 };
 
 //Get better opponent against foxes.
-export const getBetterOpponent = async (req: Request, res: Response) => {
-    let rivals: any = {};
-    let best = {
-        name: '',
-        score: 0,
-    };
-    let opponent: any[] = [];
-    const BetterOpponent = await Match.find({});
-    opponent = BetterOpponent.map((item) => item.result);
-    opponent.forEach((item) => {
-        for (let [key, value] of item) {
-            if (rivals.hasOwnProperty(key)) {
-                rivals[key] = rivals[key] + value;
-            } else {
-                rivals[key] = value;
-            }
-        }
-    });
-    delete rivals['Leicester City'];
-    rivals = new Map(Object.entries(rivals));
-    for (let [key, value] of rivals) {
-        if (best.score < value) {
-            best.name = key;
-            best.score = value;
-        }
-        console.log(key);
-    }
-    res.json(best);
-};
+export const getBetterOpponent = (req: Request, res: Response) =>
+    Match.find({})
+        //Filter Leicester city from results.
+        .then((matches) =>
+            matches.map(
+                ({ result }) =>
+                    Array.from(result.entries()).filter(
+                        ([team]) => team !== 'Leicester City'
+                    )[0]
+            )
+        )
+        //Reduce totals.
+        .then((results) =>
+            results.reduce<Record<string, number>>(
+                (total, [team, goals]) => ({
+                    ...total,
+                    [team]: (total[team] ?? 0) + goals,
+                }),
+                {}
+            )
+        )
+        //Get best.
+        .then(
+            (results) =>
+                Object.entries(results).sort(
+                    ([, goalsA], [, goalsB]) => goalsB - goalsA
+                )[0]
+        )
+        .then(([name = '', score = 0]) => res.json({ name, score }));

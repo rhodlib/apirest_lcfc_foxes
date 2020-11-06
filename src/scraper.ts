@@ -14,7 +14,7 @@ const fetchAPI = ({ page = 0, pageSize = 100 } = {}): Promise<API> =>
         res.json()
     );
 
-Match.countDocuments({})
+Match.countDocuments({ apiId: { $exists: true } })
     .then((count) =>
         fetchAPI({ pageSize: 1 }).then((res) => ({
             apiCount: res.pageInfo.numEntries,
@@ -37,21 +37,24 @@ Match.countDocuments({})
 
             console.log(`adding ${diff} elements`);
 
-            scrap().then((content) => {
-                const newElements = content.slice(0, diff).map((item) => ({
-                    apiId: item.id,
-                    date: item.kickoff.millis,
-                    result: Object.fromEntries(
-                        item.teams.map(({ team, score }) => [team.name, score])
-                    ),
-                }));
-                Match.insertMany(newElements, (err, docs) => {
-                    if (err) return mongoose.disconnect(err);
-                    mongoose.disconnect();
-                });
-            });
+            scrap()
+                .then((content) => {
+                    const newElements = content.slice(0, diff).map((item) => ({
+                        apiId: item.id,
+                        date: item.kickoff.millis,
+                        result: Object.fromEntries(
+                            item.teams.map(({ team, score }) => [
+                                team.name,
+                                score,
+                            ])
+                        ),
+                    }));
+                    return Match.insertMany(newElements);
+                })
+                .then(() => mongoose.disconnect());
         } else {
             console.log('Up to date');
+            mongoose.disconnect();
         }
     })
     .catch(console.error);

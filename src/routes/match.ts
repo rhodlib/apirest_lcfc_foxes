@@ -3,17 +3,17 @@ import { TokenValidation } from '../middlewares/verifyToken';
 import {
     getLastMatch,
     getByIdOrDate,
-    getByDateRange,
     getBetterOpponent,
     createNewMatch,
+    getPoints,
 } from '../controllers/match.controller';
 
 const router = Router();
 
-router.get('/search', getByIdOrDate);
 router.get('/last', getLastMatch);
-router.get('/range', getByDateRange);
+router.get('/search/:id?', getByIdOrDate);
 router.get('/betteropponent', getBetterOpponent);
 router.post('/create', createNewMatch);
+router.get('/points', getPoints);
 
 export default router;
