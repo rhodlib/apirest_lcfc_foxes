@@ -25,7 +25,7 @@
     "typescript": "^4.0.5"
   },
   "scripts": {
-    "scrap-prod": "tsnode dist/scraper.js",
+    "scrap-prod": "ts-node dist/scraper.js",
     "scrap": "ts-node src/scraper.ts",
     "start": "ts-node dist/index.js",
     "dev": "concurrently \"npm run scrap\" \"tsc -w\" \"nodemon dist/index.js\"",
