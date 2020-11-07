@@ -1,8 +1,10 @@
 import mongoose from 'mongoose';
 
+const mongoURL = process.env.MONGODB_ATLAS || 'mongodb://localhost/test';
+
 //Initialize database
 mongoose
-    .connect('mongodb://localhost/test', {
+    .connect(mongoURL, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
         useCreateIndex: true,

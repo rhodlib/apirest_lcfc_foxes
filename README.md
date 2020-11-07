@@ -1,6 +1,6 @@
 # LCFC - Leicester City - API REST
 
-## API Rest created with TypeScript, NodeJS, Express, MongoDB make to get information about The Leicester City "Foxes"
+## API Rest created with TypeScript, NodeJS, Express and MongoDB to get information about The Leicester City "Foxes"
 
 ## How to use in Local
 

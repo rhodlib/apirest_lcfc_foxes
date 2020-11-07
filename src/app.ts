@@ -6,7 +6,7 @@ import matchRoutes from './routes/match';
 const app: Application = express();
 
 //Settings
-app.set('port', 3000);
+app.set('port', process.env.PORT || 4000);
 
 //Middlewares
 app.use(express.json());

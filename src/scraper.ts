@@ -4,8 +4,6 @@ import './database';
 import fetch from 'node-fetch';
 import { API } from './types/API';
 
-mongoose.set('debug', true);
-
 const endpoint =
     'https://footballapi-lcfc.pulselive.com/football/fixtures?teams=26&statuses=C&sort=desc';
 
