@@ -16,7 +16,7 @@ export const signup = (req: Request, res: Response) => {
                         { _id: savedUser._id },
                         process.env.TOKEN_SECRET || 'tokenaux'
                     );
-                    res.header('authtoken', token).json({
+                    res.header('authtoken', token).status(201).json({
                         message: 'User created sucessfully',
                     });
                 })
