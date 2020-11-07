@@ -26,7 +26,9 @@
   },
   "scripts": {
     "scrap": "ts-node ./src/scraper.ts",
-    "dev": "concurrently \"npm run scrap\" \"tsc -w\" \"nodemon dist/index.js\""
+    "start": "node dist/index.js",
+    "dev": "concurrently \"npm run scrap\" \"tsc -w\" \"nodemon dist/index.js\"",
+    "preinstall": "concurrently \"npm run scrap\" \"tsc -w\""
   },
   "repository": {
     "type": "git",
