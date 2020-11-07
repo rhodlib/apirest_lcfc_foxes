@@ -25,11 +25,12 @@
     "typescript": "^4.0.5"
   },
   "scripts": {
-    "scrap-prod": "ts-node dist/scraper.js",
+    "scrap-prod": "node dist/scraper.js",
     "scrap": "ts-node src/scraper.ts",
-    "start": "ts-node dist/index.js",
+    "start": "concurrently \"npm run scrap-prod\" node dist/index.js",
+    "build": "tsc",
     "dev": "concurrently \"npm run scrap\" \"tsc -w\" \"nodemon dist/index.js\"",
-    "preinstall": "concurrently \"npm run scrap-prod\" \"tsc -w\""
+    "preinstall": "npm run build"
   },
   "repository": {
     "type": "git",

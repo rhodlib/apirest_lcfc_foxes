@@ -9,7 +9,7 @@ const auth_1 = __importDefault(require("./routes/auth"));
 const match_1 = __importDefault(require("./routes/match"));
 const app = express_1.default();
 //Settings
-app.set('port', 3000);
+app.set('port', process.env.PORT || 4000);
 //Middlewares
 app.use(express_1.default.json());
 app.use(morgan_1.default('dev'));
