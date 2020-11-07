@@ -31,6 +31,11 @@ const matchSchema = new Schema({
     },
 });
 
+/**
+ * Takes timestamps on string format, and transform into Date to search a match or matches in the database
+ * @param from string of timestamp.
+ * @param to string of timestamp.
+ */
 matchSchema.statics.findByDate = function (
     from: string,
     to?: string

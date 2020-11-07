@@ -55,6 +55,8 @@ export const getPoints = (req: Request, res: Response) => {
             )
             .then((result) => res.status(200).json(result))
             .catch((err) => res.status(404).json(err));
+    } else {
+        return res.status(400).json({ message: 'Bad Request' });
     }
 };
 

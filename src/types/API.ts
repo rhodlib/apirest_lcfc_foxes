@@ -1,3 +1,5 @@
+//Types extracted from the API of https://www.lcfc.com/ using http://www.jsontots.com/.
+
 export interface API {
     pageInfo: PageInfo;
     content: Content[];

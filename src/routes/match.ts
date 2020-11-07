@@ -10,10 +10,10 @@ import {
 
 const router = Router();
 
-router.get('/last', getLastMatch);
-router.get('/search/:id?', getByIdOrDate);
-router.get('/betteropponent', getBetterOpponent);
-router.post('/create', createNewMatch);
-router.get('/points', getPoints);
+router.get('/last', TokenValidation, getLastMatch);
+router.get('/search/:id?', TokenValidation, getByIdOrDate);
+router.get('/betteropponent', TokenValidation, getBetterOpponent);
+router.post('/create', TokenValidation, createNewMatch);
+router.get('/points', TokenValidation, getPoints);
 
 export default router;
