@@ -15,7 +15,7 @@
 
 ## Or you can use this url
 
-    The server is hosted on heroku: https://lcfc-apirest.herokuapp.com
+    The API is hosted on heroku: https://lcfc-apirest.herokuapp.com
 
 ---
 
