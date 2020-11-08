@@ -10,19 +10,17 @@ export const signup = (req: Request, res: Response) => {
     user.encryptPassword(user.password)
         .then((hashedPassword) => {
             user.password = hashedPassword;
-            user.save()
-                .then((savedUser) => {
-                    const token: string = jwt.sign(
-                        { _id: savedUser._id },
-                        process.env.TOKEN_SECRET || 'tokenaux'
-                    );
-                    res.header('authtoken', token).status(201).json({
-                        message: 'User created sucessfully',
-                    });
-                })
-                .catch((err) => res.status(400).json(err));
+            return user.save().then((savedUser) => {
+                const token: string = jwt.sign(
+                    { _id: savedUser._id },
+                    process.env.TOKEN_SECRET || 'tokenaux'
+                );
+                res.header('authtoken', token).status(201).json({
+                    message: 'User created sucessfully',
+                });
+            });
         })
-        .catch((err) => res.status(400).json({ message: 'Bad request' }));
+        .catch((err) => res.status(400).json({ message: 'Bad request', err }));
 };
 
 //Controller to signin.

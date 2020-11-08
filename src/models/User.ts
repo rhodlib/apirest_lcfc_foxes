@@ -56,10 +56,10 @@ userSchema.methods.encryptPassword = (password: string): Promise<string> =>
  *
  * @param password string.
  */
-userSchema.methods.validatePassword = async function (
+userSchema.methods.validatePassword = function (
     password: string
 ): Promise<boolean> {
-    return await bcrypt.compareSync(password, this.password);
+    return bcrypt.compare(password, this.password);
 };
 
 export default model<IUser>('User', userSchema);

@@ -15,7 +15,7 @@
 
 ## Or you can use this url
 
-    The server is hosted on heroku
+    The server is hosted on heroku: https://lcfc-apirest.herokuapp.com
 
 ---
 
@@ -87,6 +87,7 @@ Private routes to get information about Leicester City. **_You need to be authen
 
 ### Technologies
 
+-   [node v15](https://nodejs.org/)
 -   [bcryptjs](https://www.npmjs.com/package/bcryptjs)
 -   [dotenv](https://www.npmjs.com/package/dotenv)
 -   [express](https://expressjs.com/)
