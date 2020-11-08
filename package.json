@@ -26,7 +26,7 @@
   },
   "scripts": {
     "scrap": "ts-node src/scraper.ts",
-    "start": "te-node dist/index.js",
+    "start": "ts-node dist/index.js",
     "build": "tsc",
     "dev": "concurrently \"npm run scrap\" \"tsc -w\" \"nodemon dist/index.js\"",
     "preinstall": "npm run build"
